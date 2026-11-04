@@ -1,4 +1,4 @@
-# Companion Mono 1.3 — an Iosevka companion for Source Sans 3.
+# Companion Mono 1.4 — an Iosevka companion for Source Sans 3.
 # Reference: Adobe Source Sans 3.052, 1000 units per em.
 #
 # Two families. Companion Mono keeps Iosevka's own proportions in two widths; Companion Mono
@@ -14,8 +14,9 @@
 # metricOverride: Iosevka centres its line on symbolMid, so a 1326-unit leading centred on
 # 337 spans Source Sans's line box (1000/-326), and box drawing and blocks join from line to
 # line. The period and other punctuation dots are 15% smaller than Iosevka's, closer to
-# Source Sans's. build/finalize.py still sets the hhea line metrics and Windows clipping
-# bounds afterwards.
+# Source Sans's. Unison's also tighten the side spacing and lower the capitals (see its
+# plans). build/finalize.py still sets the hhea line metrics and Windows clipping bounds
+# afterwards.
 
 [buildPlans.CompanionMono]
 family = "Companion Mono"
@@ -90,7 +91,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMono.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -137,7 +138,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoItalic.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -185,7 +186,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtended.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -229,7 +230,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtendedItalic.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -237,7 +238,9 @@ description = "Companion Mono: a custom Iosevka build tuned to accompany Source 
 
 # Unison: the standard width, scaled to 93.4% after the build (build/scale-unison.py) so its
 # x-height matches Source Sans 3's. Its weights are heavier, so the scaled stems meet their
-# targets.
+# targets. Its side spacing is 20% tighter than Iosevka's, so its letters come closer to
+# Source Sans 3's widths, and its capitals and figures are built at 702 units, which scaling
+# brings to Source Sans 3's cap height of 656 (702 = 656 / 0.934).
 
 [buildPlans.CompanionMonoUnison]
 family = "Companion Mono Unison"
@@ -280,9 +283,11 @@ inherits = "buildPlans.CompanionMono"
 leading = 1326
 symbolMid = 337
 periodSize = "default_periodSize * 0.85"
+sb = "default_sb * 0.8"
+cap = 702
 
 [buildPlans.CompanionMonoUnison.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -329,9 +334,11 @@ inherits = "buildPlans.CompanionMonoItalic"
 leading = 1326
 symbolMid = 337
 periodSize = "default_periodSize * 0.85"
+sb = "default_sb * 0.8"
+cap = 702
 
 [buildPlans.CompanionMonoUnisonItalic.namingOverride]
-version = "1.3.0"
+version = "1.4.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"

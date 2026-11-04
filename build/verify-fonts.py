@@ -27,7 +27,7 @@ STYLES = {  # style: (CSS weight, italic)
     "BoldItalic": (700, True),
 }
 IOSEVKA = (520, 735, 735)  # x-height, cap height, ascender: Iosevka's own proportions
-UNISON = (486, 686, 686)  # the same, scaled to 93.4%: Source Sans 3's x-height
+UNISON = (486, 656, 686)  # Source Sans 3's x-height and cap height after scaling
 EIGHT = list(STYLES)
 SIX = EIGHT[2:]  # without Light, which only Unison has
 FAMILIES = [  # (file family, width prefix, family name, cell, heights, styles, web fonts)

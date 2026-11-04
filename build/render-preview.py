@@ -28,8 +28,8 @@ SCALE = 2
 W, LEFT, MID, RIGHT = 1120, 48, 578, 1072
 LINE_BOX = 1.326  # ascender + descender in em, shared by both families
 # Inline code's tint above and below the baseline, in em: centred on Unison's capitals
-# (0.69), so code sits level in it, and deep enough to clear its descenders (0.21).
-CODE_TINT = (0.95, 0.27)
+# (0.656), so code sits level in it, and deep enough to clear its descenders (0.21).
+CODE_TINT = (0.93, 0.27)
 PAPER, INK, MUTED, BLUE, RULE = "#fbfaf6", "#1b1b18", "#706e66", "#185a96", "#cbc7bc"
 TINT, GREEN = "#efece3", "#4a6b2f"
 SANS_FILES = {  # Companion Mono style -> Source Sans 3 file suffix

@@ -8,7 +8,7 @@ All 20 styles pass:
 
 - Family, weight, and italic metadata; fixed pitch; 1000 units per em; 11° italics.
 - Every printable ASCII character advances one cell: 500 units, 547 in Semi-Extended, or 467 in Unison. The combining acute accent has zero advance.
-- Cap height 735, x-height 520, and ascender 735 (Unison: 686, 486, and 686), in OS/2 and in the measured H, x, and b outlines.
+- Cap height 735, x-height 520, and ascender 735 (Unison: 656, 486, and 686), in OS/2 and in the measured H, x, and b outlines.
 - Line metrics are Source Sans 3's (1000, −326, 0) in hhea and OS/2, with USE_TYPO_METRICS set; the full block █ spans that line box, so box drawing joins from line to line; Windows clipping bounds cover the font's full vertical extent.
 - HarfBuzz shapes sample Latin, Greek, Cyrillic, arrows, mathematical symbols, and box drawing without missing glyphs. Operators are unchanged by default; `dlig` substitutes ligatures without changing advance width.
 - TrueType hinting is present.
@@ -25,7 +25,7 @@ Output of `build/check-weights.py`, which also checks every weight against its t
 | Source Sans 3 | 44 / 82 / 115 / 147 | 41 / 76 / 107 / 136 | 51% / 49% |
 | Companion Mono | - / 81 / 103 / 129 | - / 77 / 96 / 120 | 52% / 48% |
 | Companion Mono Semi-Extended | - / 81 / 100 / 120 | - / 77 / 94 / 111 | 44% / 41% |
-| Companion Mono Unison | 44 / 83 / 100 / 121 | 42 / 76 / 92 / 112 | 52% / 48% |
+| Companion Mono Unison | 44 / 83 / 100 / 121 | 42 / 77 / 93 / 112 | 51% / 48% |
 
 ## Companion Mono Line
 
