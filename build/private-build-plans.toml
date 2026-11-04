@@ -1,0 +1,338 @@
+# Companion Mono 1.3 — an Iosevka companion for Source Sans 3.
+# Reference: Adobe Source Sans 3.052, 1000 units per em.
+#
+# Two families. Companion Mono keeps Iosevka's own proportions in two widths; Companion Mono
+# Unison is the standard width scaled to Source Sans 3's x-height by build/scale-unison.py
+# after the build. Each width and family has an upright and an italic plan, so the italics
+# can be lighter than the uprights, as in Source Sans, and each gets its own weights. The
+# other plans inherit the letterforms, and the widths and slopes they share; Iosevka reads
+# family, spacing, ligations, metric overrides, and naming from each plan, so those are
+# repeated. Shape weights meet the stem targets in build/check-weights.py (rationale: README,
+# "Weight"). Iosevka thickens strokes as the cell widens, so recalibrate a width's weights
+# after changing it; Unison's are heavier, so its stems meet their targets after scaling.
+#
+# metricOverride: Iosevka centres its line on symbolMid, so a 1326-unit leading centred on
+# 337 spans Source Sans's line box (1000/-326), and box drawing and blocks join from line to
+# line. The period and other punctuation dots are 15% smaller than Iosevka's, closer to
+# Source Sans's. build/finalize.py still sets the hhea line metrics and Windows clipping
+# bounds afterwards.
+
+[buildPlans.CompanionMono]
+family = "Companion Mono"
+spacing = "term"
+noCvSs = true # Letterforms are fixed here; no cv/ss features in the fonts.
+
+[buildPlans.CompanionMono.variants]
+inherits = "ss09" # Iosevka's Source Code Pro–inspired starting point.
+
+# Letterforms closest to Source Sans 3. Only departures from ss09 are listed.
+# `design` applies to both slopes; `upright` and `italic` to one.
+[buildPlans.CompanionMono.variants.design]
+capital-d = "standard-serifless"
+capital-j = "serifless"
+capital-m = "flat-bottom-serifless"
+capital-w = "straight-flat-top-serifless"
+f = "serifless-crossbar-at-x-height"
+t = "flat-hook-short-neck2"
+one = "base"
+five = "oblique-flat-serifless"
+eight = "two-circles"
+brace = "straight"
+percent = "rings-continuous-slash"
+at = "compact"
+# Deliberate code distinctions where Source Sans's form is ambiguous in a mono cell.
+# ss09 already supplies serifed j, an l with a top serif, and a dotted zero.
+capital-i = "short-serifed"
+
+[buildPlans.CompanionMono.variants.upright]
+i = "serifed"
+six = "open-contour" # Source Sans's 6 sweeps into its bowl; its 9 keeps ss09's straight stem.
+
+# Source Sans italics are cursive. ss09 already supplies single-storey a and g, tailed
+# serifed i and l, and closed 6 and 9; these add cursive Cyrillic а в ь ъ ы and Greek φ.
+[buildPlans.CompanionMono.variants.italic]
+cyrl-a = "single-storey-serifless"
+cyrl-ve = "cursive"
+cyrl-yeri = "cursive"
+cyrl-yery = "cursive"
+lower-phi = "cursive"
+
+# Programming ligatures are available through dlig, off by default.
+[buildPlans.CompanionMono.ligations]
+enables = [] # Empty calt set; Iosevka always builds its separate dlig feature.
+
+[buildPlans.CompanionMono.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"
+
+[buildPlans.CompanionMono.weights.Regular]
+shape = 432
+menu = 400
+css = 400
+
+[buildPlans.CompanionMono.weights.SemiBold]
+shape = 616
+menu = 600
+css = 600
+
+[buildPlans.CompanionMono.weights.Bold]
+shape = 838
+menu = 700
+css = 700
+
+[buildPlans.CompanionMono.slopes]
+Upright = "default.Upright"
+
+[buildPlans.CompanionMono.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMono.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono: a custom Iosevka build tuned to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
+
+[buildPlans.CompanionMonoItalic]
+family = "Companion Mono"
+spacing = "term"
+noCvSs = true # Letterforms are fixed here; no cv/ss features in the fonts.
+
+[buildPlans.CompanionMonoItalic.variants]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoItalic.ligations]
+enables = []
+
+[buildPlans.CompanionMonoItalic.widths]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoItalic.weights.Regular]
+shape = 386
+menu = 400
+css = 400
+
+[buildPlans.CompanionMonoItalic.weights.SemiBold]
+shape = 547
+menu = 600
+css = 600
+
+[buildPlans.CompanionMonoItalic.weights.Bold]
+shape = 756
+menu = 700
+css = 700
+
+[buildPlans.CompanionMonoItalic.slopes.Italic]
+angle = 11
+shape = "italic"
+menu = "italic"
+css = "italic"
+
+[buildPlans.CompanionMonoItalic.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMonoItalic.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono: a custom Iosevka build tuned to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
+
+# Semi-Extended: Iosevka's 547-unit width, for terminals.
+
+[buildPlans.CompanionMonoSemiExtended]
+family = "Companion Mono"
+spacing = "term"
+noCvSs = true
+
+[buildPlans.CompanionMonoSemiExtended.variants]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoSemiExtended.ligations]
+enables = []
+
+[buildPlans.CompanionMonoSemiExtended.widths.SemiExtended]
+shape = 547
+menu = 6
+css = "semi-expanded"
+
+[buildPlans.CompanionMonoSemiExtended.weights.Regular]
+shape = 408
+menu = 400
+css = 400
+
+[buildPlans.CompanionMonoSemiExtended.weights.SemiBold]
+shape = 570
+menu = 600
+css = 600
+
+[buildPlans.CompanionMonoSemiExtended.weights.Bold]
+shape = 745
+menu = 700
+css = 700
+
+[buildPlans.CompanionMonoSemiExtended.slopes]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoSemiExtended.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMonoSemiExtended.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono: a custom Iosevka build tuned to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
+
+[buildPlans.CompanionMonoSemiExtendedItalic]
+family = "Companion Mono"
+spacing = "term"
+noCvSs = true
+
+[buildPlans.CompanionMonoSemiExtendedItalic.variants]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoSemiExtendedItalic.ligations]
+enables = []
+
+[buildPlans.CompanionMonoSemiExtendedItalic.widths]
+inherits = "buildPlans.CompanionMonoSemiExtended"
+
+[buildPlans.CompanionMonoSemiExtendedItalic.weights.Regular]
+shape = 374
+menu = 400
+css = 400
+
+[buildPlans.CompanionMonoSemiExtendedItalic.weights.SemiBold]
+shape = 505
+menu = 600
+css = 600
+
+[buildPlans.CompanionMonoSemiExtendedItalic.weights.Bold]
+shape = 660
+menu = 700
+css = 700
+
+[buildPlans.CompanionMonoSemiExtendedItalic.slopes]
+inherits = "buildPlans.CompanionMonoItalic"
+
+[buildPlans.CompanionMonoSemiExtendedItalic.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMonoSemiExtendedItalic.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono: a custom Iosevka build tuned to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
+
+# Unison: the standard width, scaled to 93.4% after the build (build/scale-unison.py) so its
+# x-height matches Source Sans 3's. Its weights are heavier, so the scaled stems meet their
+# targets.
+
+[buildPlans.CompanionMonoUnison]
+family = "Companion Mono Unison"
+spacing = "term"
+noCvSs = true
+
+[buildPlans.CompanionMonoUnison.variants]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoUnison.ligations]
+enables = []
+
+[buildPlans.CompanionMonoUnison.widths]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoUnison.weights.Light] # Unison only: for code in Source Sans 3 Light.
+shape = 232
+menu = 300
+css = 300
+
+[buildPlans.CompanionMonoUnison.weights.Regular]
+shape = 489
+menu = 400
+css = 400
+
+[buildPlans.CompanionMonoUnison.weights.SemiBold]
+shape = 665
+menu = 600
+css = 600
+
+[buildPlans.CompanionMonoUnison.weights.Bold]
+shape = 838
+menu = 700
+css = 700
+
+[buildPlans.CompanionMonoUnison.slopes]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoUnison.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMonoUnison.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono Unison: a custom Iosevka build scaled to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
+
+[buildPlans.CompanionMonoUnisonItalic]
+family = "Companion Mono Unison"
+spacing = "term"
+noCvSs = true
+
+[buildPlans.CompanionMonoUnisonItalic.variants]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoUnisonItalic.ligations]
+enables = []
+
+[buildPlans.CompanionMonoUnisonItalic.widths]
+inherits = "buildPlans.CompanionMono"
+
+[buildPlans.CompanionMonoUnisonItalic.weights.Light]
+shape = 219
+menu = 300
+css = 300
+
+[buildPlans.CompanionMonoUnisonItalic.weights.Regular]
+shape = 427
+menu = 400
+css = 400
+
+[buildPlans.CompanionMonoUnisonItalic.weights.SemiBold]
+shape = 570
+menu = 600
+css = 600
+
+[buildPlans.CompanionMonoUnisonItalic.weights.Bold]
+shape = 756
+menu = 700
+css = 700
+
+[buildPlans.CompanionMonoUnisonItalic.slopes]
+inherits = "buildPlans.CompanionMonoItalic"
+
+[buildPlans.CompanionMonoUnisonItalic.metricOverride]
+leading = 1326
+symbolMid = 337
+periodSize = "default_periodSize * 0.85"
+
+[buildPlans.CompanionMonoUnisonItalic.namingOverride]
+version = "1.3.0"
+copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
+manufacturer = "Peter Baumgartner"
+designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
+description = "Companion Mono Unison: a custom Iosevka build scaled to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."

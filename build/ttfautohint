@@ -1,0 +1,3 @@
+#!/bin/sh
+# ttfautohint for the Iosevka build, from the self-contained ttfautohint-py wheel.
+exec uv run --no-project --quiet --with ttfautohint-py==0.6.1 python -m ttfautohint "$@"

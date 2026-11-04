@@ -1,0 +1,7 @@
+# Iosevka checkout, build cache, draft fonts, and draft previews
+.cache/
+# Built desktop fonts (~140 MB per build); ship them with releases instead
+fonts/ttf/
+.ruff_cache/
+.DS_Store
+__pycache__/

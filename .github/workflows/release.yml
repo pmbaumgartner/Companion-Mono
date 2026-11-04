@@ -1,0 +1,46 @@
+# Push a tag such as v1.3.0 to build every cut from that commit and publish a release with
+# the fonts attached. The tag must match the version in build/private-build-plans.toml.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      JOBS: 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: astral-sh/setup-uv@v10.3.3
+
+      - name: Check the tag matches the build plans' version
+        run: |
+          if grep '^version = ' build/private-build-plans.toml | grep -vqF "= \"${GITHUB_REF_NAME#v}\""; then
+            echo "::error::$GITHUB_REF_NAME does not match every version in build/private-build-plans.toml"
+            exit 1
+          fi
+
+      - name: Build
+        run: |
+          bash build/build.sh
+          bash build/build.sh line
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          dir=CompanionMono-$version
+          mkdir -p "$dir/fonts"
+          cp -R fonts/ttf fonts/woff2 fonts/svg "$dir/fonts/"
+          cp companion-mono.css OFL.md "$dir/"
+          zip -rq "$dir.zip" "$dir"
+          gh release create "$GITHUB_REF_NAME" "$dir.zip" --title "Companion Mono $version" --generate-notes
