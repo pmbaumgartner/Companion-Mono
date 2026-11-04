@@ -43,4 +43,5 @@ jobs:
           cp -R fonts/ttf fonts/woff2 fonts/svg "$dir/fonts/"
           cp companion-mono.css OFL.md "$dir/"
           zip -rq "$dir.zip" "$dir"
-          gh release create "$GITHUB_REF_NAME" "$dir.zip" --title "Companion Mono $version" --generate-notes
+          gh release create "$GITHUB_REF_NAME" "$dir.zip" fonts/ttf/*.ttf fonts/woff2/*.woff2 fonts/svg/*.svg \
+            --title "Companion Mono $version" --generate-notes

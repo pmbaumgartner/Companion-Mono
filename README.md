@@ -12,7 +12,7 @@ For pen plotters, **Companion Mono Line** draws the same letters as single strok
 
 ## Install
 
-Open the files in `fonts/ttf/` and install them with your operating system's font manager. The TTFs are build outputs and are not tracked in git: download the zip from the [latest release](../../releases/latest), which has them in `fonts/ttf/`, or build them (see below). Select **Companion Mono**, or **Companion Mono Unison** beside Source Sans, in your editor or application. Restart an application if the family does not appear immediately.
+Open the files in `fonts/ttf/` and install them with your operating system's font manager. The TTFs are build outputs and are not tracked in git: download them from the [latest release](../../releases/latest), one by one or in the zip's `fonts/ttf/`, or build them (see below). Select **Companion Mono**, or **Companion Mono Unison** beside Source Sans, in your editor or application. Restart an application if the family does not appear immediately.
 
 - macOS: select the TTF files and open them in Font Book, then install.
 - Windows: select the TTF files, right-click, and choose Install.
@@ -102,7 +102,7 @@ The recipe has six build plans: `CompanionMono` and `CompanionMonoItalic` for th
 
 After changes, inspect accents, punctuation, mathematical symbols, and all weights as well as ordinary text.
 
-To publish a release, set the same `version` in every build plan, commit, and push a matching tag, such as `git tag v1.3.0 && git push origin v1.3.0`. `.github/workflows/release.yml` then builds every cut and Companion Mono Line from that commit on GitHub and attaches `CompanionMono-1.3.0.zip` to a new release: the TTFs, the WOFF2 files with `companion-mono.css`, the SVG fonts, and `OFL.md`. It stops before building if the tag and the build plans' version differ.
+To publish a release, set the same `version` in every build plan, commit, and push a matching tag, such as `git tag v1.3.0 && git push origin v1.3.0`. `.github/workflows/release.yml` then builds every cut and Companion Mono Line from that commit on GitHub and publishes a new release with each TTF, WOFF2, and SVG font file and `CompanionMono-1.3.0.zip`, which holds them all with `companion-mono.css` and `OFL.md`. It stops before building if the tag and the build plans' version differ.
 
 ## Provenance and licenses
 
