@@ -1,5 +1,5 @@
 Copyright (c) 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net)
-Companion Mono modifications copyright (c) 2026, Peter Baumgartner
+Copyright (c) 2026, Peter Baumgartner (Companion Mono modifications)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
