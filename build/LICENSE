@@ -1,7 +1,8 @@
 The build scripts in this directory (build.sh, ttfautohint, the Python scripts, and line/)
-are licensed under the MIT License below. The build plan, private-build-plans.toml, is font
-source and is licensed under the SIL Open Font License 1.1 (../OFL.md). The Source Sans 3
-fonts in reference/ are Adobe's, under their own license (../licenses/OFL-Source-Sans-3.md).
+are licensed under the MIT License below. The build plan, private-build-plans.toml, and
+iosevka.patch, which changes Iosevka's glyph source, are font source and are licensed under
+the SIL Open Font License 1.1 (../OFL.md). The Source Sans 3 fonts in reference/ are
+Adobe's, under their own license (../licenses/OFL-Source-Sans-3.md).
 
 MIT License
 

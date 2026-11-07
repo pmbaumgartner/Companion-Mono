@@ -118,6 +118,12 @@ def check_ttf(style, family, advance, heights, weight, italic):
     # Box drawing and blocks fill the line box, so they join from line to line.
     block = bounds(font, "█")
     assert (block[3], block[1]) == LINE_METRICS[:2], (style, "Full block", block)
+    # Keyboard symbols stand on the baseline and reach the x-height, like the lowercase;
+    # ⇧'s point overshoots it as a pointed letter's does.
+    for char, overshoot in [("⌘", 1), ("⎋", 1), ("⇧", 20)]:
+        box = bounds(font, char)
+        assert abs(box[1]) <= 1, (style, char, box)
+        assert x_height - 1 <= box[3] <= x_height + overshoot, (style, char, box)
     assert all(tag in font for tag in ("fpgm", "prep", "cvt ")), (style, "Hinting")
     for char, expected in [("x", x_height), ("H", cap), ("b", ascender)]:
         box = bounds(font, char)

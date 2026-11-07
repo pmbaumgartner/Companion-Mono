@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build Companion Mono and Companion Mono Unison from the pinned, unmodified Iosevka release.
+# Build Companion Mono and Companion Mono Unison from the pinned Iosevka release.
 #
 #   bash build/build.sh         all hinted styles -> fonts/, then finalize, verify, and
 #                               check weights
@@ -7,10 +7,11 @@
 #   bash build/build.sh line    Companion Mono Line, single-stroke SVG fonts for pen
 #                               plotters -> fonts/svg/
 #
-# Iosevka builds and hints Companion Mono. It builds Unison unhinted; build/scale-unison.py
-# scales it, and this script then hints it as Iosevka would, with Iosevka's glyph-to-script
-# controls. The Iosevka checkout and its build cache live in .cache/iosevka, so later builds
-# are incremental. JOBS sets concurrent build jobs (default 2; each can use more than 1 GB).
+# build/iosevka.patch redraws Iosevka's keyboard symbols and thick arrows. Iosevka builds
+# and hints Companion Mono. It builds Unison unhinted; build/scale-unison.py scales it, and
+# this script then hints it as Iosevka would, with Iosevka's glyph-to-script controls. The
+# Iosevka checkout and its build cache live in .cache/iosevka, so later builds are
+# incremental. JOBS sets concurrent build jobs (default 2; each can use more than 1 GB).
 set -euo pipefail
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
@@ -33,6 +34,26 @@ fi
   exit 1
 }
 [[ -d "$iosevka/node_modules" ]] || (cd "$iosevka" && npm ci --no-audit --no-fund)
+
+# The checkout keeps a copy of the patch it has applied, so an unchanged patch leaves the
+# sources, and so the build cache, untouched. A changed patch is applied in place of the old
+# one, unless the sources already have its changes, or have changes that neither patch has.
+patch="$root/build/iosevka.patch"
+applied="$iosevka/companion-mono.patch"
+sources_match() { git -C "$iosevka" diff | cmp -s - "$1"; }
+if ! cmp -s "$patch" "$applied"; then
+  if ! sources_match "$patch"; then
+    git -C "$iosevka" diff --quiet || sources_match "$applied" || {
+      printf '%s has changes that build/iosevka.patch lacks. Save them into the patch, or\n' \
+        "$iosevka" >&2
+      printf 'discard them with: git -C %s checkout -- .\n' "$iosevka" >&2
+      exit 1
+    }
+    git -C "$iosevka" checkout --quiet -- .
+    git -C "$iosevka" apply "$patch"
+  fi
+  cp "$patch" "$applied"
+fi
 
 # Line traces the stroke centerlines of each glyph's construction at a hairline weight and
 # writes them as SVG fonts at Unison's size. It reads the build plans directly.

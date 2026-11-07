@@ -11,6 +11,7 @@ All 20 styles pass:
 - Cap height 735, x-height 520, and ascender 735 (Unison: 656, 486, and 686), in OS/2 and in the measured H, x, and b outlines.
 - Line metrics are Source Sans 3's (1000, −326, 0) in hhea and OS/2, with USE_TYPO_METRICS set; the full block █ spans that line box, so box drawing joins from line to line; Windows clipping bounds cover the font's full vertical extent.
 - HarfBuzz shapes sample Latin, Greek, Cyrillic, arrows, mathematical symbols, and box drawing without missing glyphs. Operators are unchanged by default; `dlig` substitutes ligatures without changing advance width.
+- Keyboard symbols stand on the baseline and reach the x-height: ⌘ and ⎋ exactly, ⇧ with its point's overshoot.
 - TrueType hinting is present.
 - The Unison WOFF2 files cover printable ASCII and match their TTFs in advances, sample outlines, line metrics, and shaping.
 
@@ -37,4 +38,4 @@ Not every glyph or renderer is inspected. Line-box sharing with Source Sans foll
 
 ## Build
 
-Iosevka 34.9.0 (commit `2487637bb71f41b2a66134afd9faa6c316e5a438`, unmodified), Node.js 24.13.1, npm 11.8.0, ttfautohint 1.8.4.16-eb64 (ttfautohint-py 0.6.1), fontTools 4.67.0. Reference: Adobe Source Sans 3.052 (`3.052R`). Unison is scaled with fontTools and hinted with the same ttfautohint, using Iosevka's glyph-to-script controls. Fonts are stamped with the last commit's time; other tool versions can change binary hashes.
+Iosevka 34.9.0 (commit `2487637bb71f41b2a66134afd9faa6c316e5a438`, with `build/iosevka.patch`), Node.js 24.13.1, npm 11.8.0, ttfautohint 1.8.4.16-eb64 (ttfautohint-py 0.6.1), fontTools 4.67.0. Reference: Adobe Source Sans 3.052 (`3.052R`). Unison is scaled with fontTools and hinted with the same ttfautohint, using Iosevka's glyph-to-script controls. Fonts are stamped with the last commit's time; other tool versions can change binary hashes.

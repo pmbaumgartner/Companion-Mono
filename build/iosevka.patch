@@ -1,0 +1,610 @@
+diff --git a/packages/font-glyphs/src/symbol/arrow/simple.ptl b/packages/font-glyphs/src/symbol/arrow/simple.ptl
+index a4a415a..bc71825 100644
+--- a/packages/font-glyphs/src/symbol/arrow/simple.ptl
++++ b/packages/font-glyphs/src/symbol/arrow/simple.ptl
+@@ -8,10 +8,12 @@ glyph-block Symbol-Arrow-Simple : for-width-kinds WideWidth1
+ 	glyph-block-import CommonShapes
+ 	glyph-block-import Common-Derivatives
+ 	glyph-block-import Symbol-Arrow-Shared : ArrowDims ArrowT MkArrowT
++	glyph-block-import Symbol-Geometric-Shared : KeyboardDim
+ 
+ 	define dims : ArrowDims MosaicWidth
+ 	define Arrow : ArrowT dims
+ 	define MkArrow : MkArrowT dims
++	define Key : KeyboardDim MosaicUnitWidth MosaicWidth
+ 
+ 	define {
+ 		.arrowHeight arrowHeight
+@@ -224,13 +226,14 @@ glyph-block Symbol-Arrow-Simple : for-width-kinds WideWidth1
+ 	[MkArrow.doubleAnchorAt 0.1] BarToBarShape ArrowToDiamondShape [MangleName 'BarArrowDiamondLeft']  [MangleUnicode 0x291F] arrowRSB SymbolMid arrowSB SymbolMid
+ 	[MkArrow.doubleAnchorAt 0.1] BarToBarShape ArrowToDiamondShape [MangleName 'BarArrowDiamondRight'] [MangleUnicode 0x2920] arrowSB SymbolMid arrowRSB SymbolMid
+ 
+-	# Arrow Heads
++	# Arrow Heads. ⌃ is the Control key, so it and ⌄ span the keyboard symbols' box from its
++	# top or bottom.
+ 	create-glyph [MangleName 'arrowHeadUp'] [MangleUnicode 0x2303] : glyph-proc
+ 		set-width MosaicWidth
+-		include : Arrow.Head.shape arrowMidX arrowBot arrowMidX arrowTop
++		include : Arrow.Head.shape Key.MidX Key.Bot Key.MidX Key.Top (Key.HalfWidth * 0.9)
+ 	create-glyph [MangleName 'arrowHeadDown'] [MangleUnicode 0x2304] : glyph-proc
+ 		set-width MosaicWidth
+-		include : Arrow.Head.shape arrowMidX arrowTop arrowMidX arrowBot
++		include : Arrow.Head.shape Key.MidX Key.Top Key.MidX Key.Bot (Key.HalfWidth * 0.9)
+ 
+ 	# These arrows are always wide. In force-monospace variants they will be deleted
+ 	if (MosaicWidthScalar > 1 && !para.forceMonospace) : do
+diff --git a/packages/font-glyphs/src/symbol/arrow/thick.ptl b/packages/font-glyphs/src/symbol/arrow/thick.ptl
+index 91e74d4..15a03bb 100644
+--- a/packages/font-glyphs/src/symbol/arrow/thick.ptl
++++ b/packages/font-glyphs/src/symbol/arrow/thick.ptl
+@@ -8,25 +8,49 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 	glyph-block-import CommonShapes
+ 	glyph-block-import Common-Derivatives
+ 	glyph-block-import Symbol-Arrow-Shared : ArrowDims ArrowT MkArrowT
++	glyph-block-import Symbol-Geometric-Shared : KeyboardDim
+ 
+ 	define dims : ArrowDims MosaicWidth
+ 	define Arrow : ArrowT dims
+ 	define MkArrow : MkArrowT dims
+ 
+ 	define {
+-		.arrowTop arrowTop
+-		.arrowBot arrowBot
+-		.arrowMidX arrowMidX
+-		.arrowSB arrowSB
+-		.arrowRSB arrowRSB
+-		.arrowDiagRSB arrowDiagRSB
+-		.arrowDiagSB arrowDiagSB
+-		.arrowDiagBot arrowDiagBot
+-		.arrowDiagTop arrowDiagTop
+-
+ 		.halfTerminal halfTerminal
+ 	} dims
+ 
++	# Thick arrows fill the keyboard symbols' box along their direction, so ⇧ stands on the
++	# baseline and reaches the x-height. Their heads are as wide as the box, with 45° flanks,
++	# and their shafts half as wide, in every direction. Horizontal arrows are centred in the
++	# box's height, and diagonal ones in the box, as long as ⇧. Arrows pointing both ways, and
++	# ⏎, have smaller, steeper heads so their shafts show.
++	define Key : KeyboardDim MosaicUnitWidth MosaicWidth
++	# Arrowheads overshoot their tips and wings by twice the overshoot (O is negative), so
++	# heads, and the tips of horizontal and diagonal arrows, are drawn that much inside the box.
++	define headInset : -2 * O
++	# A single head is as long as it is wide, so its flanks are at 45°.
++	define singleHeadSize : Key.HalfWidth - headInset
++	define singleHead { singleHeadSize singleHeadSize }
++	define doubleHead { (Key.HalfWidth * 0.7) (Key.HalfWidth * 0.56) }
++	define arrowTop Key.Top
++	define arrowBot Key.Bot
++	define arrowMidX Key.MidX
++	define arrowMidY Key.MidY
++	define arrowSB : Key.Left + headInset
++	define arrowRSB : Key.Right - headInset
++	# Lighter than the other keyboard symbols' strokes, so the shafts' counters stay open.
++	define fine : GeometryStroke * 0.6
++	# ⇮ and ⇯ are ⇧ and ⇫ under a chevron, which rises above the x-height by two strokes and a
++	# counter between them, measured across a single head's flanks.
++	define chevronRise : fine * 2.75 * Math.SQRT2
++
++	# A diagonal arrow, pointing along the signs dx and dy, has its tip at a corner of a square
++	# as wide as the box; its tail's centre is inset from the opposite corner by half its shaft
++	# width.
++	define [DiagonalArrow shape id unicode dx dy] : begin
++		local tip : Key.HalfWidth - headInset / Math.SQRT2
++		local tail : Key.HalfWidth - singleHeadSize / 2 / Math.SQRT2
++		MkArrow.single shape id unicode (arrowMidX - dx * tail) (arrowMidY - dy * tail) (arrowMidX + dx * tip) (arrowMidY + dy * tip)
++
+ 	define o : O * 2
+ 
+ 	define [SemiHookArrowBar x1 y1 x2 y2 halfSw halfFine s w] : begin
+@@ -45,26 +69,28 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 			new-glyph : PointingTo x1 y1 x2 y2 : lambda [mag] : begin
+ 				Rect width (-width) (0.6 * length - 0.5 * sw) (0.6 * length + 0.5 * sw)
+ 
+-	define [ThickArrowShape color] : lambda [x1 y1 x2 y2] : begin
+-		local headLen : MosaicUnitWidth * [Math.sqrt MosaicWidthScalar] * 0.4
+-		local halfBarWidth : headLen / 3
+-		local headWidth : halfBarWidth * 2
+-		local fine : Math.min [AdviceStroke 5] (halfBarWidth * 0.6)
++	define [ThickArrowShape color _head] : lambda [x1 y1 x2 y2] : begin
++		local { headWidth headLen } : fallback _head singleHead
++		local halfBarWidth : headWidth / 2 - fine / 2
++		# How far the counter's tip sits below the outline's, per unit of stroke.
++		local flankK : [Math.hypot headWidth headLen] / headWidth
++		# Shafts start a little inside where they meet the head's flanks, as a share of their
++		# half-width, so the shaft and head outlines join for any head shape.
++		local barInset : 1.2 * headLen / headWidth
+ 
+ 		local turnWidth : headWidth * 1.5
+ 		local barLen : headLen * 0.2 + fine * 2
+ 		local dotGap : barLen - fine * 2
+ 		local doubleHeadOffset : headLen * 0.4
+-		local whiteDoubleHeadOffset : headLen * 0.4 + 0.75 * fine
+ 
+ 		local mag : Math.hypot (y2 - y1) (x2 - x1)
+ 		local p : (mag - fine) / mag
+-		local p2 : (mag - fine * [Math.sqrt 13] / 2) / mag
+-		local innerHeaderLengthShrink : fine * (1 + [Math.sqrt 13] / 2)
++		local p2 : (mag - fine * flankK) / mag
++		local innerHeaderLengthShrink : fine * (1 + flankK)
+ 		local p3 : (mag - doubleHeadOffset) / mag
+ 		local p4 : (mag - fine * [Math.sqrt 13] / 2 - doubleHeadOffset) / mag
+-		local p3WD : (mag - whiteDoubleHeadOffset) / mag
+-		local p4WD : (mag - fine * [Math.sqrt 13] / 2 - whiteDoubleHeadOffset) / mag
++		local p3WD : (mag - chevronRise) / mag
++		local p4WD : (mag - fine * flankK - chevronRise) / mag
+ 
+ 		local x1a : mix x1 x2 (1 - p)
+ 		local y1a : mix y1 y2 (1 - p)
+@@ -79,18 +105,18 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 			[Just 'white'] : difference
+ 				union
+ 					Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+-					Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) 2
++					Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) barInset
+ 				union
+ 					Arrow.Head.trigShape x1a y1a x2a y2a (headWidth - innerHeaderLengthShrink * headWidth / headLen) (headLen - innerHeaderLengthShrink)
+-					Arrow.Bar.shape x1a y1a x2a y2a (halfBarWidth - fine / 2) 2
++					Arrow.Bar.shape x1a y1a x2a y2a (halfBarWidth - fine / 2) barInset
+ 
+ 			[Just "white-open"] : difference
+ 				union
+ 					Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+-					Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) 2
++					Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) barInset
+ 				union
+ 					Arrow.Head.trigShape x1CoA y1CoA x2a y2a (headWidth - innerHeaderLengthShrink * headWidth / headLen) (headLen - innerHeaderLengthShrink)
+-					Arrow.Bar.shape x1CoA y1CoA x2a y2a (halfBarWidth - fine / 2) 2
++					Arrow.Bar.shape x1CoA y1CoA x2a y2a (halfBarWidth - fine / 2) barInset
+ 
+ 			[Just "white-closing"] : difference
+ 					Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) 0 0
+@@ -102,19 +128,19 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 						Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+ 						Arrow.Head.trigShape x1a y1a x2a y2a (headWidth - innerHeaderLengthShrink * headWidth / headLen) (headLen - innerHeaderLengthShrink)
+ 					Arrow.Head.trigShape x1 y1 [mix x1 x2 p3WD] [mix y1 y2 p3WD] headWidth headLen
+-					Arrow.Bar.shape x1 y1 [mix x1 x2 p3WD] [mix y1 y2 p3WD] (halfBarWidth + fine / 2) 2
++					Arrow.Bar.shape x1 y1 [mix x1 x2 p3WD] [mix y1 y2 p3WD] (halfBarWidth + fine / 2) barInset
+ 				union
+ 					Arrow.Head.trigShape x1a y1a [mix x1 x2 p4WD] [mix y1 y2 p4WD] (headWidth - innerHeaderLengthShrink * headWidth / headLen) (headLen - innerHeaderLengthShrink)
+-					Arrow.Bar.shape x1CoA y1CoA [mix x1 x2 p4WD] [mix y1 y2 p4WD] (halfBarWidth - fine / 2) 2
++					Arrow.Bar.shape x1CoA y1CoA [mix x1 x2 p4WD] [mix y1 y2 p4WD] (halfBarWidth - fine / 2) barInset
+ 
+ 			[Just "whiteBarred"] : union
+ 				difference
+ 					union
+ 						Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+-						Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) 2
++						Arrow.Bar.shape x1 y1 x2 y2 (halfBarWidth + fine / 2) barInset
+ 					union
+ 						Arrow.Head.trigShape x1CoA y1CoA x2a y2a (headWidth - innerHeaderLengthShrink * headWidth / headLen) (headLen - innerHeaderLengthShrink)
+-						Arrow.Bar.shape x1CoA y1CoA x2a y2a (halfBarWidth - fine / 2) 2
++						Arrow.Bar.shape x1CoA y1CoA x2a y2a (halfBarWidth - fine / 2) barInset
+ 				TriangleArrowHeadBar x1 y1 x2 y2 headWidth fine headLen
+ 
+ 			[Just "whiteDot"] : difference
+@@ -143,7 +169,7 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 
+ 			[Just "black"] : union
+ 				Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+-				Arrow.Bar.shape x1 y1 x2 y2 halfBarWidth 2
++				Arrow.Bar.shape x1 y1 x2 y2 halfBarWidth barInset
+ 
+ 			[Just "blackSemiHookR"] : union
+ 				Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+@@ -153,37 +179,37 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 				Arrow.Head.trigShape x1 y1 x2 y2 headWidth headLen
+ 				SemiHookArrowBar x1 y1 x2 y2 halfBarWidth halfTerminal (-headWidth) 2
+ 
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E6'] [MangleUnicode 0x21E6] arrowRSB SymbolMid arrowSB SymbolMid
++	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E6'] [MangleUnicode 0x21E6] arrowRSB arrowMidY arrowSB arrowMidY
+ 	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E7'] [MangleUnicode 0x21E7] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E8'] [MangleUnicode 0x21E8] arrowSB SymbolMid arrowRSB SymbolMid
++	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E8'] [MangleUnicode 0x21E8] arrowSB arrowMidY arrowRSB arrowMidY
+ 	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni21E9'] [MangleUnicode 0x21E9] arrowMidX arrowTop arrowMidX arrowBot
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni2B00'] [MangleUnicode 0x2B00] arrowDiagSB arrowDiagBot arrowDiagRSB arrowDiagTop
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni2B01'] [MangleUnicode 0x2B01] arrowDiagRSB arrowDiagBot arrowDiagSB arrowDiagTop
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni2B02'] [MangleUnicode 0x2B02] arrowDiagSB arrowDiagTop arrowDiagRSB arrowDiagBot
+-	MkArrow.single [ThickArrowShape 'white'] [MangleName 'uni2B03'] [MangleUnicode 0x2B03] arrowDiagRSB arrowDiagTop arrowDiagSB arrowDiagBot
+-	MkArrow.double [ThickArrowShape 'white-open'] [ThickArrowShape 'white-open'] [MangleName 'uni2B04'] [MangleUnicode 0x2B04] arrowSB SymbolMid arrowRSB SymbolMid
+-	MkArrow.double [ThickArrowShape 'white-open'] [ThickArrowShape 'white-open'] [MangleName 'uni21F3'] [MangleUnicode 0x21F3] arrowMidX arrowBot arrowMidX arrowTop
++	DiagonalArrow [ThickArrowShape 'white'] [MangleName 'uni2B00'] [MangleUnicode 0x2B00] 1 1
++	DiagonalArrow [ThickArrowShape 'white'] [MangleName 'uni2B01'] [MangleUnicode 0x2B01] (-1) 1
++	DiagonalArrow [ThickArrowShape 'white'] [MangleName 'uni2B02'] [MangleUnicode 0x2B02] 1 (-1)
++	DiagonalArrow [ThickArrowShape 'white'] [MangleName 'uni2B03'] [MangleUnicode 0x2B03] (-1) (-1)
++	MkArrow.double [ThickArrowShape 'white-open' doubleHead] [ThickArrowShape 'white-open' doubleHead] [MangleName 'uni2B04'] [MangleUnicode 0x2B04] arrowSB arrowMidY arrowRSB arrowMidY
++	MkArrow.double [ThickArrowShape 'white-open' doubleHead] [ThickArrowShape 'white-open' doubleHead] [MangleName 'uni21F3'] [MangleUnicode 0x21F3] arrowMidX arrowBot arrowMidX arrowTop
+ 
+ 	MkArrow.double [ThickArrowShape 'whiteDot'] [ThickArrowShape 'white-open'] [MangleName 'uni21EA'] [MangleUnicode 0x21EA] arrowMidX arrowBot arrowMidX arrowTop
+ 	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'white-open'] [MangleName 'uni21EB'] [MangleUnicode 0x21EB] arrowMidX arrowBot arrowMidX arrowTop
+ 	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'whiteBarred'] [MangleName 'uni21EC'] [MangleUnicode 0x21EC] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.double [ThickArrowShape 'white-closing'] [ThickArrowShape 'whiteDouble'] [MangleName 'uni21EE'] [MangleUnicode 0x21EE] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'whiteDouble'] [MangleName 'uni21EF'] [MangleUnicode 0x21EF] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'white-open'] [MangleName 'uni21F0'] [MangleUnicode 0x21F0] arrowSB SymbolMid arrowRSB SymbolMid
++	MkArrow.double [ThickArrowShape 'white-closing'] [ThickArrowShape 'whiteDouble'] [MangleName 'uni21EE'] [MangleUnicode 0x21EE] arrowMidX arrowBot arrowMidX (arrowTop + chevronRise)
++	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'whiteDouble'] [MangleName 'uni21EF'] [MangleUnicode 0x21EF] arrowMidX arrowBot arrowMidX (arrowTop + chevronRise)
++	MkArrow.double [ThickArrowShape 'whiteRect'] [ThickArrowShape 'white-open'] [MangleName 'uni21F0'] [MangleUnicode 0x21F0] arrowSB arrowMidY arrowRSB arrowMidY
+ 	MkArrow.double [ThickArrowShape 'whiteDot'] [ThickArrowShape 'whiteBarred'] [MangleName 'uni2BB8'] [MangleUnicode 0x2BB8] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.double [ThickArrowShape 'whiteLeftTurn'] [ThickArrowShape 'white-open'] [MangleName 'uni23CE'] [MangleUnicode 0x23CE] arrowRSB SymbolMid arrowSB SymbolMid
++	MkArrow.double [ThickArrowShape 'whiteLeftTurn' doubleHead] [ThickArrowShape 'white-open' doubleHead] [MangleName 'uni23CE'] [MangleUnicode 0x23CE] arrowRSB arrowMidY arrowSB arrowMidY
+ 
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B05'] [MangleUnicode 0x2B05] arrowRSB SymbolMid arrowSB SymbolMid
++	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B05'] [MangleUnicode 0x2B05] arrowRSB arrowMidY arrowSB arrowMidY
+ 	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B06'] [MangleUnicode 0x2B06] arrowMidX arrowBot arrowMidX arrowTop
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni27A1'] [MangleUnicode 0x27A1] arrowSB SymbolMid arrowRSB SymbolMid
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B95'] [MangleUnicode 0x2B95] arrowSB SymbolMid arrowRSB SymbolMid
++	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni27A1'] [MangleUnicode 0x27A1] arrowSB arrowMidY arrowRSB arrowMidY
++	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B95'] [MangleUnicode 0x2B95] arrowSB arrowMidY arrowRSB arrowMidY
+ 	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B07'] [MangleUnicode 0x2B07] arrowMidX arrowTop arrowMidX arrowBot
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B08'] [MangleUnicode 0x2B08] arrowDiagSB arrowDiagBot arrowDiagRSB arrowDiagTop
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B09'] [MangleUnicode 0x2B09] arrowDiagRSB arrowDiagBot arrowDiagSB arrowDiagTop
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B0A'] [MangleUnicode 0x2B0A] arrowDiagSB arrowDiagTop arrowDiagRSB arrowDiagBot
+-	MkArrow.single [ThickArrowShape 'black'] [MangleName 'uni2B0B'] [MangleUnicode 0x2B0B] arrowDiagRSB arrowDiagTop arrowDiagSB arrowDiagBot
+-	MkArrow.double [ThickArrowShape 'black'] [ThickArrowShape 'black'] [MangleName 'uni2B0C'] [MangleUnicode 0x2B0C] arrowSB SymbolMid arrowRSB SymbolMid
+-	MkArrow.double [ThickArrowShape 'black'] [ThickArrowShape 'black'] [MangleName 'uni2B0D'] [MangleUnicode 0x2B0D] arrowMidX arrowBot arrowMidX arrowTop
++	DiagonalArrow [ThickArrowShape 'black'] [MangleName 'uni2B08'] [MangleUnicode 0x2B08] 1 1
++	DiagonalArrow [ThickArrowShape 'black'] [MangleName 'uni2B09'] [MangleUnicode 0x2B09] (-1) 1
++	DiagonalArrow [ThickArrowShape 'black'] [MangleName 'uni2B0A'] [MangleUnicode 0x2B0A] 1 (-1)
++	DiagonalArrow [ThickArrowShape 'black'] [MangleName 'uni2B0B'] [MangleUnicode 0x2B0B] (-1) (-1)
++	MkArrow.double [ThickArrowShape 'black' doubleHead] [ThickArrowShape 'black' doubleHead] [MangleName 'uni2B0C'] [MangleUnicode 0x2B0C] arrowSB arrowMidY arrowRSB arrowMidY
++	MkArrow.double [ThickArrowShape 'black' doubleHead] [ThickArrowShape 'black' doubleHead] [MangleName 'uni2B0D'] [MangleUnicode 0x2B0D] arrowMidX arrowBot arrowMidX arrowTop
+ 
+ 	create-glyph [MangleName 'uni21ED'] [MangleUnicode 0x21ED] : composite-proc
+ 		refer-glyph : MangleName 'uni21EB'
+@@ -191,7 +217,7 @@ glyph-block Symbol-Arrow-Thick : for-width-kinds WideWidth1
+ 			refer-glyph : MangleName 'uni2B06'
+ 			Rect arrowTop arrowBot (arrowMidX - [AdviceStroke 5] / 2) (arrowMidX + [AdviceStroke 5] / 2)
+ 
+-	MkArrow.single [ThickArrowShape 'blackSemiHookL'] [MangleName 'uni27A5'] [MangleUnicode 0x27A5] arrowSB SymbolMid arrowRSB SymbolMid
+-	MkArrow.single [ThickArrowShape 'blackSemiHookR'] [MangleName 'uni27A6'] [MangleUnicode 0x27A6] arrowSB SymbolMid arrowRSB SymbolMid
++	MkArrow.single [ThickArrowShape 'blackSemiHookL'] [MangleName 'uni27A5'] [MangleUnicode 0x27A5] arrowSB arrowMidY arrowRSB arrowMidY
++	MkArrow.single [ThickArrowShape 'blackSemiHookR'] [MangleName 'uni27A6'] [MangleUnicode 0x27A6] arrowSB arrowMidY arrowRSB arrowMidY
+ 
+ 	MkArrow.single [Arrow.toBarShapeT : ThickArrowShape 'black'] [MangleName 'blackArrowBarDown'] [MangleUnicode 0x1F8B3] arrowMidX arrowTop arrowMidX arrowBot
+diff --git a/packages/font-glyphs/src/symbol/geometric/ballot-box.ptl b/packages/font-glyphs/src/symbol/geometric/ballot-box.ptl
+index ca02cef..5867bf8 100644
+--- a/packages/font-glyphs/src/symbol/geometric/ballot-box.ptl
++++ b/packages/font-glyphs/src/symbol/geometric/ballot-box.ptl
+@@ -75,43 +75,49 @@ glyph-block Symbol-Geometric-Ballot-Box : for-width-kinds WideWidth1
+ 		include : CrossMark Geom.MidX Geom.MidY circXSize boldSwMark
+ 
+ 	do "Delete Symbols"
+-		glyph-block-import Symbol-Geometric-Shared : ConvexPolygonOutline
+-
+-		define delGap : Math.max (Geom.Size / 6) [AdviceStroke 5 Geom.Scalar]
+-		define delSize : (Geom.Size - delGap) / 1.5 - swMark * 0.75
+-
+-		define [RightFingerpostFill cx cy r] : begin
+-			define skew : r * 1 / 4
+-			return : spiro-outline
+-				corner (cx - r)        (cy + r / 1.5)
+-				corner (cx + r - skew) (cy + r / 1.5)
+-				corner (cx + r + skew)  cy
+-				corner (cx + r - skew) (cy - r / 1.5)
+-				corner (cx - r)        (cy - r / 1.5)
+-
+-		define [LeftFingerpostFill cx cy r] : begin
+-			define skew : r * 1 / 4
+-			return : spiro-outline
+-				corner (cx + r)        (cy - r / 1.5)
+-				corner (cx + r)        (cy + r / 1.5)
+-				corner (cx - r + skew) (cy + r / 1.5)
+-				corner (cx - r - skew)  cy
+-				corner (cx - r + skew) (cy - r / 1.5)
++		glyph-block-import Symbol-Geometric-Shared : ConvexPolygonOutline KeyboardDim
++
++		# Keys in the keyboard symbols' box, a little wider than tall: ⌫ and ⌦ point out of their
++		# body to its edge. Their outlines and marks share a stroke lighter than ⌘'s, so the
++		# marks stay open.
++		define Key : KeyboardDim MosaicUnitWidth MosaicWidth
++		define keyHalfHeight : Key.HalfHeight * 0.8
++		define keyPoint : keyHalfHeight * 0.5
++		define keyStroke : GeometryStroke * 0.75
++		define delSize : 0.4 * keyHalfHeight
++
++		define [KeyRectFill] : Rect (Key.MidY + keyHalfHeight) (Key.MidY - keyHalfHeight) Key.Left Key.Right
++
++		define [RightFingerpostFill] : spiro-outline
++			corner Key.Left               (Key.MidY + keyHalfHeight)
++			corner (Key.Right - keyPoint) (Key.MidY + keyHalfHeight)
++			corner Key.Right               Key.MidY
++			corner (Key.Right - keyPoint) (Key.MidY - keyHalfHeight)
++			corner Key.Left               (Key.MidY - keyHalfHeight)
++
++		define [LeftFingerpostFill] : spiro-outline
++			corner Key.Right             (Key.MidY - keyHalfHeight)
++			corner Key.Right             (Key.MidY + keyHalfHeight)
++			corner (Key.Left + keyPoint) (Key.MidY + keyHalfHeight)
++			corner Key.Left               Key.MidY
++			corner (Key.Left + keyPoint) (Key.MidY - keyHalfHeight)
+ 
+ 		create-glyph [MangleName 'UpArrowInRectangle'] [MangleUnicode 0x2BB9] : glyph-proc
+-			include [refer-glyph : MangleName 'whiteHoriRectangle'] AS_BASE ALSO_METRICS
+-			include : UpArrowMark Geom.MidX Geom.MidY delSize swMark
++			set-width Key.Width
++			include : ConvexPolygonOutline [new-glyph : KeyRectFill] keyStroke
++			include : UpArrowMark Key.MidX Key.MidY delSize keyStroke
+ 
+ 		create-glyph [MangleName 'xInRectangle'] [MangleUnicode 0x2327] : glyph-proc
+-			include [refer-glyph : MangleName 'whiteHoriRectangle'] AS_BASE ALSO_METRICS
+-			include : CrossMark Geom.MidX Geom.MidY delSize swMark
++			set-width Key.Width
++			include : ConvexPolygonOutline [new-glyph : KeyRectFill] keyStroke
++			include : CrossMark Key.MidX Key.MidY delSize keyStroke
+ 
+ 		create-glyph [MangleName 'deleteRight'] [MangleUnicode 0x2326] : glyph-proc
+-			set-width Geom.Width
+-			include : ConvexPolygonOutline [new-glyph : RightFingerpostFill Geom.MidX Geom.MidY Geom.Size] GeometryStroke
+-			include : CrossMark Geom.MidX Geom.MidY delSize swMark
++			set-width Key.Width
++			include : ConvexPolygonOutline [new-glyph : RightFingerpostFill] keyStroke
++			include : CrossMark (Key.MidX - keyPoint / 2) Key.MidY delSize keyStroke
+ 
+ 		create-glyph [MangleName 'deleteLeft'] [MangleUnicode 0x232B] : glyph-proc
+-			set-width Geom.Width
+-			include : ConvexPolygonOutline [new-glyph : LeftFingerpostFill Geom.MidX Geom.MidY Geom.Size] GeometryStroke
+-			include : CrossMark Geom.MidX Geom.MidY delSize swMark
++			set-width Key.Width
++			include : ConvexPolygonOutline [new-glyph : LeftFingerpostFill] keyStroke
++			include : CrossMark (Key.MidX + keyPoint / 2) Key.MidY delSize keyStroke
+diff --git a/packages/font-glyphs/src/symbol/geometric/masked.ptl b/packages/font-glyphs/src/symbol/geometric/masked.ptl
+index dc64278..c6e9102 100644
+--- a/packages/font-glyphs/src/symbol/geometric/masked.ptl
++++ b/packages/font-glyphs/src/symbol/geometric/masked.ptl
+@@ -8,9 +8,10 @@ glyph-module
+ glyph-block Symbol-Geometric-Masked : for-width-kinds WideWidth1
+ 	glyph-block-import CommonShapes
+ 	glyph-block-import Common-Derivatives
+-	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes
++	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes KeyboardDim
+ 
+ 	define Geom : GeometricDim MosaicUnitWidth MosaicWidth
++	define Key : KeyboardDim MosaicUnitWidth MosaicWidth
+ 	define Size : GeometricSizes Geom
+ 
+ 	define [UpperHalfMask] : Rect (Geom.MidY + Geom.Size * 2) Geom.MidY 0 Geom.Width
+@@ -454,21 +455,37 @@ glyph-block Symbol-Geometric-Masked : for-width-kinds WideWidth1
+ 				corner (Geom.MidX + size) Geom.MidY
+ 				corner Geom.MidX (Geom.MidY - size)
+ 
++		# ⎋ is a key: its ring fills the keyboard symbols' box.
++		define [KeyRing sw] : begin
++			define [Ellipse rx ry] : spiro-outline
++				g4 (Key.MidX - rx) Key.MidY
++				arcvh.superness 2
++				g4 Key.MidX (Key.MidY - ry)
++				archv.superness 2
++				g4 (Key.MidX + rx) Key.MidY
++				arcvh.superness 2
++				g4 Key.MidX (Key.MidY + ry)
++				archv.superness 2
++				close
++			return : difference
++				Ellipse Key.HalfWidth Key.HalfHeight
++				Ellipse (Key.HalfWidth - [HSwToV sw]) (Key.HalfHeight - sw)
++
+ 		create-glyph [MangleName 'uni238B'] [MangleUnicode 0x238B] : glyph-proc
+-			set-width Geom.Width
++			set-width Key.Width
+ 			include : difference
+-				refer-glyph : MangleName 'whiteCircle'
+-				intersection [MaskAbove Geom.MidY] [MaskLeft Geom.MidX]
++				KeyRing GeometryStroke
++				intersection [MaskAbove Key.MidY] [MaskLeft Key.MidX]
+ 			include : intersection
+-				MaskBelow (Geom.MidY + Geom.Size)
+-				MaskRight (Geom.MidX - Geom.Size)
++				MaskBelow Key.Top
++				MaskRight Key.Left
+ 				dispiro
+-					flat Geom.MidX Geom.MidY [widths.center GeometryStroke]
+-					curl (Geom.MidX - Geom.Size) (Geom.MidY + Geom.Size)
++					flat Key.MidX Key.MidY [widths.center GeometryStroke]
++					curl Key.Left Key.Top
+ 			include : spiro-outline
+-				corner (Geom.MidX - Geom.Size) (Geom.MidY + Geom.Size)
+-				corner (Geom.MidX - 0.375 * Geom.Size) (Geom.MidY + Geom.Size)
+-				corner (Geom.MidX - Geom.Size) (Geom.MidY + 0.375 * Geom.Size)
++				corner Key.Left Key.Top
++				corner (Key.MidX - 0.375 * Key.HalfWidth) Key.Top
++				corner Key.Left (Key.MidY + 0.375 * Key.HalfHeight)
+ 
+ 		create-glyph [MangleName 'counterbore'] [MangleUnicode 0x2334] : glyph-proc
+ 			set-width Geom.Width
+diff --git a/packages/font-glyphs/src/symbol/geometric/shared.ptl b/packages/font-glyphs/src/symbol/geometric/shared.ptl
+index 65f3367..04b5d3e 100644
+--- a/packages/font-glyphs/src/symbol/geometric/shared.ptl
++++ b/packages/font-glyphs/src/symbol/geometric/shared.ptl
+@@ -26,6 +26,23 @@ glyph-block Symbol-Geometric-Shared : begin
+ 			MidY      SymbolMid
+ 			Bot     : SymbolMid       - size
+ 
++	# The box of the keyboard symbols (⌘ ⌥ ⌃ ⇧ ⌫ ⎋ ⏏) and thick arrows runs from the baseline to
++	# the x-height, like the lowercase, across most of the cell, but no wider than it is tall.
++	glyph-block-export KeyboardDim
++	define [KeyboardDim unitWidth fullWidth] : begin
++		define geom : GeometricDim unitWidth fullWidth
++		define halfWidth : Math.min (XH / 2) [mix geom.Size (0.5 * fullWidth) 0.25]
++		return : object
++			Width       fullWidth
++			HalfWidth   halfWidth
++			HalfHeight  : XH / 2
++			Left        : 0.5 * fullWidth - halfWidth
++			MidX        : 0.5 * fullWidth
++			Right       : 0.5 * fullWidth + halfWidth
++			Top         XH
++			MidY        : XH / 2
++			Bot         0
++
+ 	glyph-block-export GeometricSizes
+ 	define [GeometricSizes Geom] : object
+ 		Large         {.size [DesignParameters.GeometricLargeX Geom.Width Geom.UnitWidth]}
+diff --git a/packages/font-glyphs/src/symbol/geometric/technical.ptl b/packages/font-glyphs/src/symbol/geometric/technical.ptl
+index 48dd6af..5511322 100644
+--- a/packages/font-glyphs/src/symbol/geometric/technical.ptl
++++ b/packages/font-glyphs/src/symbol/geometric/technical.ptl
+@@ -8,11 +8,12 @@ glyph-module
+ glyph-block Symbol-Geometric-Technical : for-width-kinds WideWidth1
+ 	glyph-block-import CommonShapes
+ 	glyph-block-import Common-Derivatives
+-	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes
++	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes KeyboardDim
+ 	glyph-block-import Shared-Symbol-Shapes : TriangleShape Polyline
+ 	glyph-block-import Symbol-Arrow-Shared : ArrowShape ArrowHead TrigArrowShape
+ 
+ 	define Geom : GeometricDim MosaicUnitWidth MosaicWidth
++	define Key : KeyboardDim MosaicUnitWidth MosaicWidth
+ 	define Size : GeometricSizes Geom
+ 
+ 	define fineGeometryStroke : AdviceStroke2 4 4 Geom.Size
+@@ -78,20 +79,21 @@ glyph-block Symbol-Geometric-Technical : for-width-kinds WideWidth1
+ 		include : VBar.r (Geom.Right - shrink) Geom.Bot Geom.Top GeometryStroke
+ 
+ 	create-glyph [MangleName 'loopedSquare'] [MangleUnicode 0x2318] : glyph-proc
+-		set-width Geom.Width
++		set-width Key.Width
+ 
+-		define stroke : AdviceStrokeInSpace (Geom.Size * 2) 6
+-		define gap : (Geom.Size * 2 - [HSwToV : stroke * 4]) / 6
++		define stroke : AdviceStrokeInSpace (Key.HalfWidth * 2) 6
++		define gapX : (Key.HalfWidth * 2 - [HSwToV : stroke * 4]) / 6
++		define gapY : (Key.HalfHeight * 2 - stroke * 4) / 6
+ 		include : lift-@ : dispiro
+ 			widths.lhs stroke
+-			flat Geom.MidX @y3
+-			curl (@x5 = [mix @x4 @x6 0.5]) (@y3 = Geom.MidY + gap)
++			flat Key.MidX @y3
++			curl (@x5 = [mix @x4 @x6 0.5]) (@y3 = Key.MidY + gapY)
+ 			archv 4
+-			g4.up.mid (@x6 = Geom.Right) @y2
++			g4.up.mid (@x6 = Key.Right) @y2
+ 			arcvh 4
+-			g4.left.mid @x5 (@y1 = Geom.Top)
++			g4.left.mid @x5 (@y1 = Key.Top)
+ 			archv 4
+-			flat (@x4 = Geom.MidX + gap) (@y2 = [mix @y1 @y3 0.5])
++			flat (@x4 = Key.MidX + gapX) (@y2 = [mix @y1 @y3 0.5])
+ 			curl @x4 @y5
+ 			arcvh 4
+ 			g4.right.mid @x5 @y6
+@@ -99,13 +101,13 @@ glyph-block Symbol-Geometric-Technical : for-width-kinds WideWidth1
+ 			g4.up.mid @x6 @y5
+ 			arcvh 4
+ 			flat @x5 @y4
+-			curl (@x2 = [mix @x1 @x3 0.5]) (@y4 = Geom.MidY - gap)
++			curl (@x2 = [mix @x1 @x3 0.5]) (@y4 = Key.MidY - gapY)
+ 			archv 4
+-			g4.down.mid (@x1 = Geom.Left) @y5
++			g4.down.mid (@x1 = Key.Left) @y5
+ 			arcvh 4
+-			g4.right.mid @x2 (@y6 = Geom.Bot)
++			g4.right.mid @x2 (@y6 = Key.Bot)
+ 			archv 4
+-			flat (@x3 = Geom.MidX - gap) (@y5 = [mix @y4 @y6 0.5])
++			flat (@x3 = Key.MidX - gapX) (@y5 = [mix @y4 @y6 0.5])
+ 			curl @x3 @y2
+ 			arcvh 4
+ 			g4.left.mid @x2 @y1
+@@ -113,45 +115,47 @@ glyph-block Symbol-Geometric-Technical : for-width-kinds WideWidth1
+ 			g4.down.mid @x1 @y2
+ 			arcvh 4
+ 			flat @x2 @y3
+-			curl Geom.MidX @y3
++			curl Key.MidX @y3
+ 
+ 	do "Keyboard Symbols"
+-		define topLine : Geom.MidY + Geom.Size / 1.5
+-		define botLine : Geom.MidY - Geom.Size / 1.5
++		define topLine : Key.MidY + Key.HalfHeight / 1.5
++		define botLine : Key.MidY - Key.HalfHeight / 1.5
+ 		define topLineC : topLine - GeometryStroke / 2
+ 		define botLineC : botLine + GeometryStroke / 2
+ 
+ 		create-glyph [MangleName 'arrowHeadUpBetweenBars'] [MangleUnicode 0x2324] : glyph-proc
+ 			set-width MosaicWidth
+-			include : ArrowHead Geom.MidX Geom.Bot Geom.MidX topLine
+-			include : HBar.t Geom.Left (Geom.MidX - Geom.Size / 3) topLine GeometryStroke
+-			include : HBar.t (Geom.MidX + Geom.Size / 3) Geom.Right topLine GeometryStroke
++			include : ArrowHead Key.MidX Key.Bot Key.MidX topLine
++			include : HBar.t Key.Left (Key.MidX - Key.HalfWidth / 3) topLine GeometryStroke
++			include : HBar.t (Key.MidX + Key.HalfWidth / 3) Key.Right topLine GeometryStroke
+ 
+ 		create-glyph [MangleName 'optionKey'] [MangleUnicode 0x2325] : glyph-proc
+-			set-width Geom.Width
++			set-width Key.Width
+ 			include : dispiro
+ 				Polyline [widths.center GeometryStroke]
+ 					points -- {
+-						{ Geom.Left  topLineC }
+-						{ (Geom.MidX - Geom.Size / 3) topLineC }
+-						{ (Geom.MidX + Geom.Size / 3) botLineC }
+-						{ Geom.Right botLineC }
++						{ Key.Left  topLineC }
++						{ (Key.MidX - Key.HalfWidth / 3) topLineC }
++						{ (Key.MidX + Key.HalfWidth / 3) botLineC }
++						{ Key.Right botLineC }
+ 					}
+ 					startAf -- [widths.center.heading GeometryStroke Rightward]
+ 					endAf -- [widths.center.heading GeometryStroke Rightward]
+-			include : HBar.t (Geom.MidX + Geom.Size / 3) Geom.Right topLine GeometryStroke
++			include : HBar.t (Key.MidX + Key.HalfWidth / 3) Key.Right topLine GeometryStroke
+ 
+ 		create-glyph [MangleName 'alternateKey'] [MangleUnicode 0x2387] : glyph-proc
+-			set-width Geom.Width
++			set-width Key.Width
++			# The arrow's tip, past its end by half a stroke and the overshoot, meets the box.
++			define arrowEnd : Key.Right - GeometryStroke / 2 + 2 * O
+ 			include : dispiro
+ 				Polyline [widths.center GeometryStroke]
+ 					points -- {
+-						{ Geom.Left  botLineC }
+-						{ (Geom.MidX - Geom.Size / 3) botLineC }
+-						{ (Geom.MidX + Geom.Size / 3) topLineC }
+-						{ (Geom.Right - Geom.Size / 6) topLineC }
++						{ Key.Left  botLineC }
++						{ (Key.MidX - Key.HalfWidth / 3) botLineC }
++						{ (Key.MidX + Key.HalfWidth / 3) topLineC }
++						{ (arrowEnd - Key.HalfWidth / 6) topLineC }
+ 					}
+ 					startAf -- [widths.center.heading GeometryStroke Rightward]
+ 					endAf -- [widths.center.heading GeometryStroke Rightward]
+-			include : ArrowShape (Geom.Right - Geom.Size / 6) topLineC (Geom.Right + GeometryStroke / 2) topLineC (GeometryStroke / 2 + Geom.Size / 3)
+-			include : HBar.b (Geom.MidX + Geom.Size / 3) Geom.Right botLine GeometryStroke
++			include : ArrowShape (arrowEnd - Key.HalfWidth / 6) topLineC (arrowEnd + GeometryStroke / 2) topLineC (GeometryStroke / 2 + Key.HalfWidth / 3)
++			include : HBar.b (Key.MidX + Key.HalfWidth / 3) Key.Right botLine GeometryStroke
+diff --git a/packages/font-glyphs/src/symbol/pictograph/iec-power-and-playback.ptl b/packages/font-glyphs/src/symbol/pictograph/iec-power-and-playback.ptl
+index f4f5ea8..bc5110e 100644
+--- a/packages/font-glyphs/src/symbol/pictograph/iec-power-and-playback.ptl
++++ b/packages/font-glyphs/src/symbol/pictograph/iec-power-and-playback.ptl
+@@ -7,9 +7,10 @@ glyph-module
+ glyph-block Symbol-Pictograph-IEC-Power-And-Playback : for-width-kinds WideWidth1 : begin
+ 	glyph-block-import CommonShapes
+ 	glyph-block-import Common-Derivatives
+-	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes
++	glyph-block-import Symbol-Geometric-Shared : GeometricDim GeometricSizes KeyboardDim
+ 
+ 	define Geom : GeometricDim MosaicUnitWidth MosaicWidth
++	define Key : KeyboardDim MosaicUnitWidth MosaicWidth
+ 	define Size : GeometricSizes Geom
+ 	define gap : Math.max (Geom.Size / 8 * MosaicWidthScalar) GeometryStroke
+ 
+@@ -114,13 +115,14 @@ glyph-block Symbol-Pictograph-IEC-Power-And-Playback : for-width-kinds WideWidth
+ 			corner (Geom.MidX + trigRad / 2) (Geom.MidY + trigRad)
+ 			corner (Geom.MidX - trigRad / 2) (Geom.MidY)
+ 
++	# ⏏ is also a key, so it stands in the keyboard symbols' box.
+ 	create-glyph [MangleName 'playback/eject'] [MangleUnicode 0x23CF] : glyph-proc
+-		set-width Geom.Width
+-		include : Rect (Geom.MidY - Geom.Size / 3) (Geom.MidY - Geom.Size) (Geom.MidX - Geom.Size) (Geom.MidX + Geom.Size)
++		set-width Key.Width
++		include : Rect (Key.Bot + Key.HalfHeight * 2 / 3) Key.Bot Key.Left Key.Right
+ 		include : spiro-outline
+-			corner (Geom.MidX - trigRad) (Geom.MidY)
+-			corner (Geom.MidX + trigRad) (Geom.MidY)
+-			corner (Geom.MidX)           (Geom.MidY + trigRad)
++			corner (Key.Left + O)  Key.MidY
++			corner (Key.Right - O) Key.MidY
++			corner Key.MidX        (Key.Top - O)
+ 
+ 	create-glyph [MangleName 'playback/fastForward'] [MangleUnicode 0x23E9] : glyph-proc
+ 		set-width Geom.Width
