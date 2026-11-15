@@ -19,14 +19,14 @@ Each TTF encodes 7,758 codepoints in about 11,950 glyphs; each WOFF2 encodes 2,4
 
 ## Weights
 
-Output of `build/check-weights.py`, which also checks every weight against its target in the README: stems within 2 units, and Unison's Light and Regular color within half a percentage point of Source Sans 3's. Width of `l` at y = 350, Light/Regular/Semibold/Bold (Light in Unison only); Regular's color, the share of the lowercase's advances times the x-height that its outlines cover (Unison's Light: 25.2% / 24.0%, Source Sans 3 Light's 25.0% / 23.6%); and the share of the advance that the Bold `n`'s stems fill at y = 260 (Source Sans's `n` is proportional; Companion Mono's advance is the cell):
+Output of `build/check-weights.py`, which also checks every weight against its target in the README: stems within 2 units, and Unison's Light and Regular color within half a percentage point of Source Sans 3's. Width of `l` at y = 350, Light/Regular/Semibold/Bold (Light in Unison only); Regular's color, the share of the lowercase's advances times the x-height that its outlines cover (Unison's Light: 24.9% / 23.5%, Source Sans 3 Light's 25.0% / 23.6%); and the share of the advance that the Bold `n`'s stems fill at y = 260 (Source Sans's `n` is proportional; Companion Mono's advance is the cell):
 
 | | Upright | Italic | Regular color, upright / italic | Bold `n` density, upright / italic |
 |---|---|---|---|---|
 | Source Sans 3 | 44 / 82 / 115 / 147 | 41 / 76 / 107 / 136 | 41.3% / 39.3% | 51% / 49% |
-| Companion Mono | - / 81 / 103 / 129 | - / 77 / 96 / 120 | 40.2% / 37.8% | 52% / 48% |
-| Companion Mono Semi-Extended | - / 81 / 100 / 120 | - / 77 / 94 / 111 | 37.2% / 35.4% | 44% / 41% |
-| Companion Mono Unison | 44 / 77 / 95 / 121 | 42 / 72 / 90 / 112 | 41.3% / 39.2% | 51% / 48% |
+| Companion Mono | - / 81 / 103 / 129 | - / 77 / 97 / 120 | 39.8% / 37.2% | 52% / 48% |
+| Companion Mono Semi-Extended | - / 81 / 100 / 120 | - / 77 / 94 / 111 | 36.8% / 34.8% | 44% / 41% |
+| Companion Mono Unison | 44 / 77 / 96 / 121 | 42 / 75 / 91 / 112 | 41.3% / 39.3% | 51% / 48% |
 
 ## Companion Mono Line
 
