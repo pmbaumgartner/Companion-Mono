@@ -2,15 +2,16 @@
 # requires-python = ">=3.12"
 # dependencies = ["fonttools==4.67.0"]
 # ///
-"""Measure Companion Mono's stems beside Source Sans 3 and check the weight targets.
+"""Measure Companion Mono's stems and color beside Source Sans 3 and check the weight targets.
 
 uv run build/check-weights.py         fonts/ttf
 uv run build/check-weights.py DIR     another build, e.g. .cache/draft
 
-Prints the stem table in VALIDATION.md. Each weight must be within TOLERANCE units of the
-target that the README's "Weight" choice sets for the stem of `l`:
-- Light and Light Italic, which only Unison has, match Source Sans 3 Light's.
-- Regular and Italic match Source Sans 3's.
+Prints the weight table in VALIDATION.md. Each weight must meet the target that the README's
+"Weight" choice sets, within TOLERANCE units for the stem of `l` or COLOR_TOLERANCE for
+color, the share of the lowercase's advance times x-height that its outlines cover:
+- Unison's Light, Regular, and their italics match the color of Source Sans 3's.
+- The other cuts' Regular and Italic stems match Source Sans 3's.
 - Bold has the stem in FAMILIES: the stems of `n` fill about 51% of the standard and
   Unison cells, as in Source Sans 3 Bold, and 44% of the Semi-Extended cell.
 - Bold Italic is lighter than Bold by the same ratio as in Source Sans 3.
@@ -22,6 +23,7 @@ import sys
 from pathlib import Path
 
 from fontTools.misc.bezierTools import splitLine, splitQuadratic
+from fontTools.pens.areaPen import AreaPen
 from fontTools.pens.basePen import BasePen
 from fontTools.ttLib import TTFont
 
@@ -40,7 +42,7 @@ COMPANION = [
     ["Light", "Regular", "SemiBold", "Bold"],
     ["LightItalic", "Italic", "SemiBoldItalic", "BoldItalic"],
 ]
-FAMILIES = {  # (file family, width prefix): (table name, upright Bold stem, has Light)
+FAMILIES = {  # (file family, width prefix): (table name, upright Bold stem, Unison)
     # Bold as dense as Source Sans 3 Bold
     ("CompanionMono", ""): ("Companion Mono", 128, False),
     # Bold like SF Mono
@@ -49,6 +51,8 @@ FAMILIES = {  # (file family, width prefix): (table name, upright Bold stem, has
     ("CompanionMonoUnison", ""): ("Companion Mono Unison", 120, True),
 }
 TOLERANCE = 2
+COLOR_TOLERANCE = 0.005
+LOWERCASE = "abcdefghijklmnopqrstuvwxyz"
 
 
 class ScanlinePen(BasePen):
@@ -86,17 +90,30 @@ def stem_widths(font, char, y, count):
     return [right - left for left, right in zip(xs[::2], xs[1::2], strict=True)]
 
 
+def color(font):
+    """The share of the lowercase's advances times the x-height that its outlines cover."""
+    glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
+    ink = 0
+    for char in LOWERCASE:
+        pen = AreaPen(glyphs)
+        glyphs[cmap[ord(char)]].draw(pen)
+        ink += abs(pen.value)
+    advances = sum(font["hmtx"][cmap[ord(char)]][0] for char in LOWERCASE)
+    return ink / (advances * font["OS/2"].sxHeight)
+
+
 def measure(paths):
-    """Per slope: the stems of `l` at y = 350 in each font, Bold last, and the share of its
-    advance that the Bold `n`'s stems fill at y = 260."""
-    stems, shares = [], []
+    """Per slope: the stems of `l` at y = 350 and the color of each font, Bold last, and
+    the share of its advance that the Bold `n`'s stems fill at y = 260."""
+    stems, colors, shares = [], [], []
     for slope in paths:
         fonts = [TTFont(path) for path in slope]
         stems.append([stem_widths(font, "l", 350, 1)[0] for font in fonts])
+        colors.append([color(font) for font in fonts])
         bold = fonts[-1]
         advance = bold["hmtx"][bold.getBestCmap()[ord("n")]][0]
         shares.append(sum(stem_widths(bold, "n", 260, 2)) / advance)
-    return stems, shares
+    return stems, colors, shares
 
 
 def companion_mono(family, prefix, style):
@@ -105,42 +122,54 @@ def companion_mono(family, prefix, style):
     return font_dir / f"{family}-{name}.ttf"
 
 
-def row(name, stems, shares):
+def row(name, stems, colors, shares):
     upright, italic = (
         " / ".join("-" if stem is None else f"{stem:.0f}" for stem in slope)
         for slope in stems
     )
-    return f"| {name} | {upright} | {italic} | {shares[0]:.0%} / {shares[1]:.0%} |"
+    regular = " / ".join(f"{slope[1]:.1%}" for slope in colors)
+    return f"| {name} | {upright} | {italic} | {regular} | {shares[0]:.0%} / {shares[1]:.0%} |"
 
 
-ss_stems, ss_shares = measure(
+ss_stems, ss_colors, ss_shares = measure(
     [
         [REFERENCE / f"SourceSans3-{style}.ttf" for style in slope]
         for slope in SOURCE_SANS
     ]
 )
 table = [
-    "| | Upright | Italic | Bold `n` density, upright / italic |",
-    "|---|---|---|---|",
-    row("Source Sans 3", ss_stems, ss_shares),
+    "| | Upright | Italic | Regular color, upright / italic | Bold `n` density, upright / italic |",
+    "|---|---|---|---|---|",
+    row("Source Sans 3", ss_stems, ss_colors, ss_shares),
 ]
 misses = []
-for (family, prefix), (name, bold_stem, has_light) in FAMILIES.items():
-    stems, shares = measure(
+for (family, prefix), (name, bold_stem, unison) in FAMILIES.items():
+    stems, colors, shares = measure(
         [
             [companion_mono(family, prefix, style) for style in styles]
-            for styles in (slope if has_light else slope[1:] for slope in COMPANION)
+            for styles in (slope if unison else slope[1:] for slope in COMPANION)
         ]
     )
-    if not has_light:
+    if not unison:
         stems = [[None, *slope] for slope in stems]
-    table.append(row(name, stems, shares))
+        colors = [[None, *slope] for slope in colors]
+    table.append(row(name, stems, colors, shares))
     (light, regular, semibold, bold), (light_it, italic, semibold_it, bold_it) = stems
+    if unison:
+        color_targets = {  # style: (measured color, target)
+            "Light": (colors[0][0], ss_colors[0][0]),
+            "Light Italic": (colors[1][0], ss_colors[1][0]),
+            "Regular": (colors[0][1], ss_colors[0][1]),
+            "Italic": (colors[1][1], ss_colors[1][1]),
+        }
+        misses += [
+            f"{name} {style}: color {measured:.1%}, target {target:.1%}"
+            for style, (measured, target) in color_targets.items()
+            if abs(measured - target) > COLOR_TOLERANCE
+        ]
     targets = {  # style: (measured stem, target)
-        "Light": (light, ss_stems[0][0]),
-        "Light Italic": (light_it, ss_stems[1][0]),
-        "Regular": (regular, ss_stems[0][1]),
-        "Italic": (italic, ss_stems[1][1]),
+        "Regular": (regular, None if unison else ss_stems[0][1]),
+        "Italic": (italic, None if unison else ss_stems[1][1]),
         "Bold": (bold, bold_stem),
         "Bold Italic": (bold_it, bold * ss_stems[1][3] / ss_stems[0][3]),
         "Semibold": (semibold, math.sqrt(regular * bold)),
@@ -149,9 +178,9 @@ for (family, prefix), (name, bold_stem, has_light) in FAMILIES.items():
     misses += [
         f"{name} {style}: stem {stem:.1f}, target {target:.1f}"
         for style, (stem, target) in targets.items()
-        if stem is not None and abs(stem - target) > TOLERANCE
+        if target is not None and abs(stem - target) > TOLERANCE
     ]
 
 print("\n".join(table))
 if misses:
-    sys.exit(f"Weights more than {TOLERANCE} units off target:\n" + "\n".join(misses))
+    sys.exit("Weights off target:\n" + "\n".join(misses))

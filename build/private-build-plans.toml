@@ -1,4 +1,4 @@
-# Companion Mono 1.5 — an Iosevka companion for Source Sans 3.
+# Companion Mono 1.6 — an Iosevka companion for Source Sans 3.
 # Reference: Adobe Source Sans 3.052, 1000 units per em.
 #
 # Two families. Companion Mono keeps Iosevka's own proportions in two widths; Companion Mono
@@ -7,9 +7,10 @@
 # can be lighter than the uprights, as in Source Sans, and each gets its own weights. The
 # other plans inherit the letterforms, and the widths and slopes they share; Iosevka reads
 # family, spacing, ligations, metric overrides, and naming from each plan, so those are
-# repeated. Shape weights meet the stem targets in build/check-weights.py (rationale: README,
-# "Weight"). Iosevka thickens strokes as the cell widens, so recalibrate a width's weights
-# after changing it; Unison's are heavier, so its stems meet their targets after scaling.
+# repeated. Shape weights meet the stem and color targets in build/check-weights.py
+# (rationale: README, "Weight"). Iosevka thickens strokes as the cell widens, so recalibrate
+# a width's weights after changing it; Unison's are heavier, so they meet their targets after
+# scaling.
 #
 # metricOverride: Iosevka centres its line on symbolMid, so a 1326-unit leading centred on
 # 337 spans Source Sans's line box (1000/-326), and box drawing and blocks join from line to
@@ -91,7 +92,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMono.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -138,7 +139,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoItalic.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -186,7 +187,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtended.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -230,14 +231,14 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtendedItalic.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
 description = "Companion Mono: a custom Iosevka build tuned to accompany Source Sans 3. Original Iosevka design by Renzhi Li. This is an independent derivative, not an Adobe or Iosevka official release."
 
 # Unison: the standard width, scaled to 93.4% after the build (build/scale-unison.py) so its
-# x-height matches Source Sans 3's. Its weights are heavier, so the scaled stems meet their
+# x-height matches Source Sans 3's. Its weights are heavier, so the scaled fonts meet their
 # targets. Its side spacing is 20% tighter than Iosevka's, so its letters come closer to
 # Source Sans 3's widths, and its capitals and figures are built at 702 units, which scaling
 # brings to Source Sans 3's cap height of 656 (702 = 656 / 0.934).
@@ -262,12 +263,12 @@ menu = 300
 css = 300
 
 [buildPlans.CompanionMonoUnison.weights.Regular]
-shape = 489
+shape = 440
 menu = 400
 css = 400
 
 [buildPlans.CompanionMonoUnison.weights.SemiBold]
-shape = 665
+shape = 615
 menu = 600
 css = 600
 
@@ -287,7 +288,7 @@ sb = "default_sb * 0.8"
 cap = 702
 
 [buildPlans.CompanionMonoUnison.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -313,12 +314,12 @@ menu = 300
 css = 300
 
 [buildPlans.CompanionMonoUnisonItalic.weights.Regular]
-shape = 427
+shape = 394
 menu = 400
 css = 400
 
 [buildPlans.CompanionMonoUnisonItalic.weights.SemiBold]
-shape = 570
+shape = 540
 menu = 600
 css = 600
 
@@ -338,7 +339,7 @@ sb = "default_sb * 0.8"
 cap = 702
 
 [buildPlans.CompanionMonoUnisonItalic.namingOverride]
-version = "1.5.0"
+version = "1.6.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
