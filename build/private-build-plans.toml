@@ -1,4 +1,4 @@
-# Companion Mono 1.8 — an Iosevka companion for Source Sans 3.
+# Companion Mono 1.9 — an Iosevka companion for Source Sans 3.
 # Reference: Adobe Source Sans 3.052, 1000 units per em.
 #
 # Two families. Companion Mono keeps Iosevka's own proportions in two widths; Companion Mono
@@ -42,13 +42,12 @@ eight = "two-circles"
 brace = "straight"
 percent = "rings-continuous-slash"
 at = "compact"
-# Source Sans's i and l: plain stems with a small tail, and its j without a top serif, in
-# place of ss09's serifs, which spread the thin letters across the cell.
-i = "semi-tailed"
-j = "serifless"
-l = "semi-tailed"
+# i and l: Source Sans's small tail, with a top serif that fills the cell where a plain stem
+# would leave a gap beside its neighbours, as in li and ill.
+i = "serifed-semi-tailed"
+l = "serifed-semi-tailed"
 # Deliberate code distinctions where Source Sans's form is ambiguous in a mono cell.
-# ss09 already supplies a dotted zero.
+# ss09 already supplies a serifed j and a dotted zero.
 capital-i = "short-serifed"
 
 [buildPlans.CompanionMono.variants.upright]
@@ -96,7 +95,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMono.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -143,7 +142,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoItalic.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -191,7 +190,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtended.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -235,7 +234,7 @@ symbolMid = 337
 periodSize = "default_periodSize * 0.85"
 
 [buildPlans.CompanionMonoSemiExtendedItalic.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -262,17 +261,17 @@ enables = []
 inherits = "buildPlans.CompanionMono"
 
 [buildPlans.CompanionMonoUnison.weights.Light] # Unison only: for code in Source Sans 3 Light.
-shape = 232
+shape = 229
 menu = 300
 css = 300
 
 [buildPlans.CompanionMonoUnison.weights.Regular]
-shape = 446
+shape = 439
 menu = 400
 css = 400
 
 [buildPlans.CompanionMonoUnison.weights.SemiBold]
-shape = 625
+shape = 613
 menu = 600
 css = 600
 
@@ -292,7 +291,7 @@ sb = "default_sb * 0.8"
 cap = 702
 
 [buildPlans.CompanionMonoUnison.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
@@ -313,17 +312,17 @@ enables = []
 inherits = "buildPlans.CompanionMono"
 
 [buildPlans.CompanionMonoUnisonItalic.weights.Light]
-shape = 219
+shape = 216
 menu = 300
 css = 300
 
 [buildPlans.CompanionMonoUnisonItalic.weights.Regular]
-shape = 408
+shape = 401
 menu = 400
 css = 400
 
 [buildPlans.CompanionMonoUnisonItalic.weights.SemiBold]
-shape = 555
+shape = 547
 menu = 600
 css = 600
 
@@ -343,7 +342,7 @@ sb = "default_sb * 0.8"
 cap = 702
 
 [buildPlans.CompanionMonoUnisonItalic.namingOverride]
-version = "1.8.0"
+version = "1.9.0"
 copyright = "Copyright 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Companion Mono modifications copyright 2026, Peter Baumgartner."
 manufacturer = "Peter Baumgartner"
 designer = "Renzhi Li (Iosevka); Peter Baumgartner (Companion Mono)"
