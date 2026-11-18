@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Build Companion Mono and Companion Mono Unison from the pinned Iosevka release.
 #
-#   bash build/build.sh         all hinted styles -> fonts/, then finalize, verify, and
-#                               check weights
-#   bash build/build.sh draft   unhinted TTFs only -> .cache/draft/, then check weights
+#   bash build/build.sh         all hinted styles -> fonts/, then finalize, verify, check
+#                               weights, and warn of opened letter spacing
+#   bash build/build.sh draft   unhinted TTFs only -> .cache/draft/, then check weights and
+#                               spacing
 #   bash build/build.sh line    Companion Mono Line, single-stroke SVG fonts for pen
 #                               plotters -> fonts/svg/
 #
@@ -117,6 +118,7 @@ if [[ "${1:-}" == draft ]]; then
   collect TTF-Unhinted "$root/.cache/draft"
   printf 'Draft fonts: %s\n' "$root/.cache/draft"
   uv run --quiet "$root/build/check-weights.py" "$root/.cache/draft"
+  uv run --quiet "$root/build/check-spacing.py" "$root/.cache/draft"
   exit
 fi
 
@@ -127,4 +129,5 @@ cd "$root"
 uv run --quiet build/finalize.py
 uv run --quiet build/verify-fonts.py
 uv run --quiet build/check-weights.py
+uv run --quiet build/check-spacing.py
 printf 'Installed fonts into %s\n' "$root/fonts"

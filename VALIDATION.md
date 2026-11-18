@@ -28,6 +28,10 @@ Output of `build/check-weights.py`, which also checks every weight against its t
 | Companion Mono Semi-Extended | - / 81 / 100 / 120 | - / 77 / 94 / 111 | 37.2% / 35.2% | 44% / 41% |
 | Companion Mono Unison | 44 / 77 / 95 / 121 | 42 / 73 / 91 / 112 | 41.3% / 39.3% | 51% / 48% |
 
+## Spacing (`build/check-spacing.py`)
+
+No pair of printable ASCII characters is more open than in 1.8 in any Unison style. Run against 1.7, 1.8's fonts warn of 243 to 340 opened pairs per style, led by `li` and `ii` in the italics and by `i` after a stem in the uprights.
+
 ## Companion Mono Line
 
 Inkscape 1.3.2's Hershey Text extension sets text in both SVG fonts without errors, including accented letters, curly quotes, dashes, and the euro sign. Each font has 228 glyphs. `build/verify-fonts.py` does not check the SVG fonts.
